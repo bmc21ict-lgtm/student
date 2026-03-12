@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Activity Showcase</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Firebase Configuration -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const storage = firebase.storage();
+        const database = firebase.database();
+    </script>
+</head>
+<body>
+    <h1>Student Activity Showcase</h1>
+    
+    <h2>Upload Photo</h2>
+    <input type="file" id="photoUpload" accept="image/*">
+    <button onclick="uploadPhoto()">Upload</button>
+
+    <h2>Activities</h2>
+    <div id="studentActivities">
+        <h3>Student Activities</h3>
+        <!-- Dynamic Activities will be displayed here -->
+    </div>
+    
+    <div id="leadershipActivities">
+        <h3>Leadership Activities</h3>
+        <!-- Dynamic Leadership Activities will be displayed here -->
+    </div>
+
+    <script>
+        function uploadPhoto() {
+            const file = document.getElementById('photoUpload').files[0];
+            const storageRef = storage.ref('photos/' + file.name);
+            storageRef.put(file).then(() => {
+                alert('Photo uploaded successfully!');
+            });
+        }
+
+        // Fetch and display activities from the database
+        const activitiesRef = database.ref('activities');
+        activitiesRef.on('value', (snapshot) => {
+            const activities = snapshot.val();
+            const activityDisplay = document.getElementById('studentActivities');
+            activityDisplay.innerHTML = '';
+            for (let key in activities) {
+                activityDisplay.innerHTML += `<p>${activities[key].description}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
